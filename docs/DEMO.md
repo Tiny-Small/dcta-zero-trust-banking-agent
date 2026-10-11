@@ -18,6 +18,8 @@ OPENROUTER_API_KEY=<your-local-key> .venv/bin/python -m demo_ui --live
 
 You may pass `--settings PATH` to select a local settings file explicitly. There is no implicit `.envrc` lookup. LIVE sends real model requests; SCRIPTED DEMO sends none.
 
+Use the six presets for repeatable SCRIPTED demonstrations. Its canned extraction accepts the documented `SGD 10` amount order; variants such as `10 SGD` can remain unresolved. The synthetic investment catalog currently contains DBS shares only. A missing UOB asset means the demo catalog cannot resolve it, not that UOB is invalid outside this mock.
+
 ## Walkthrough
 
 1. Select **A. Happy mixed-intent**. Review the separate investment and transfer cards and the lifecycle statuses. Confirm the exact bundle, run the simulated biometric step, choose Sign & Verify, Authorize, then Execute. The receipt and audit panel describe the mock outcome.

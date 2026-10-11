@@ -120,7 +120,7 @@ def render_mode_badge(live_mode: bool) -> str:
 def render_operation_cards(view: DemoStateView) -> str:
     if not view.operation_cards:
         if view.status in ("UPSTREAM_STOP", "SEMANTIC_FROZEN", "BLOCKED", "CONTRACT_ERROR"):
-            return '<p style="color:#667085;font-size:13px;">No operations to display \u2014 transaction stopped before interpretation.</p>'
+            return '<p style="color:#667085;font-size:13px;">No validated operations to display \u2014 transaction stopped before confirmation.</p>'
         return ""
     cards_html = []
     for card in view.operation_cards:

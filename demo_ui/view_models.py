@@ -146,8 +146,22 @@ def build_lifecycle_steps(
 
     # Step 3: Grounding resolved
     if state.grounding is not None:
-        if state.grounding.clarifications:
+        not_found = [f for f in state.grounding.fields if f.status == "NOT_FOUND"]
+        unresolved = [f for f in state.grounding.fields if f.status == "UNRESOLVED_REFERENCE"]
+        if any(f.field == "ASSET" for f in not_found):
+            steps.append(LifecycleStep(3, "Grounding", "fail", "Asset not available in this demo's synthetic investment catalog", "FAIL"))
+        elif not_found:
+            field = not_found[0].field.replace("_", " ").lower()
+            steps.append(LifecycleStep(3, "Grounding", "fail", f"{field.capitalize()} not found in this demo's synthetic directory", "FAIL"))
+        elif unresolved:
+            steps.append(LifecycleStep(3, "Grounding", "warning", "Reference unresolved — grounding incomplete", "WARN"))
+        elif state.grounding.clarifications:
             steps.append(LifecycleStep(3, "Grounding", "warning", "Ambiguous — clarification required", "WARN"))
+        elif state.semantic_decision and any(
+            f.kind == "MISSING_REQUIRED_FIELD" and f.field == "ASSET"
+            for f in state.semantic_decision.findings
+        ):
+            steps.append(LifecycleStep(3, "Grounding", "warning", "No investment asset identified to ground", "WARN"))
         else:
             rev = state.grounding.revision
             detail = f"Grounding resolved (revision {rev})" if rev > 0 else "Grounding resolved"
@@ -158,12 +172,25 @@ def build_lifecycle_steps(
     # Step 4: Semantic validation
     if state.semantic_gate is not None:
         result = state.semantic_decision.result if state.semantic_decision else "UNKNOWN"
-        if state.semantic_gate.state == "ELIGIBLE_FOR_BUSINESS_CHECKS":
+        if state.semantic_gate.state == "ELIGIBLE_FOR_BUSINESS_CHECKS" and result == "MATCH":
             steps.append(LifecycleStep(4, "Semantic validation", "pass", f"MATCH — eligible for business checks", "PASS"))
         elif state.semantic_gate.state == "FROZEN":
-            steps.append(LifecycleStep(4, "Semantic validation", "fail", f"DISCREPANCY — transaction frozen", "FAIL"))
+            if result == "UNRESOLVED":
+                detail = "UNRESOLVED — clarification or unsupported information required"
+                if state.semantic_decision and any(
+                    f.kind == "MISSING_REQUIRED_FIELD" and f.field == "ASSET"
+                    for f in state.semantic_decision.findings
+                ):
+                    detail += ". Asset unresolved; this demo's synthetic investment catalog currently contains DBS only"
+                steps.append(LifecycleStep(4, "Semantic validation", "warning", detail, "WARN"))
+            elif result == "DISCREPANCY":
+                steps.append(LifecycleStep(4, "Semantic validation", "fail", "DISCREPANCY — transaction frozen", "FAIL"))
+            elif result == "CONTRACT_ERROR":
+                steps.append(LifecycleStep(4, "Semantic validation", "fail", "CONTRACT_ERROR — semantic validation contract failed; transaction frozen", "FAIL"))
+            else:
+                steps.append(LifecycleStep(4, "Semantic validation", "fail", f"{result} — transaction frozen", "FAIL"))
         else:
-            steps.append(LifecycleStep(4, "Semantic validation", "warning", f"{result}", "WARN"))
+            steps.append(LifecycleStep(4, "Semantic validation", "fail", f"CONTRACT_ERROR — inconsistent semantic gate ({result})", "FAIL"))
     else:
         steps.append(later_step(4, "Semantic validation", "Awaiting validation"))
 
