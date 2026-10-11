@@ -152,6 +152,8 @@ activemq-data/
 # Environments
 .env
 .envrc
+.env.*
+!.env.example
 .venv
 env/
 venv/
@@ -207,6 +209,18 @@ tempCodeRunnerFile.py
 
 # Ruff stuff:
 .ruff_cache/
+
+# Local agent tooling and private provider material
+.aws/
+.agents/
+.codex/
+graphify-out/
+AGENTS.md
+*requests.jsonl
+evals/
+planning/
+preservation/
+.superpowers/
 
 # PyPI configuration file
 .pypirc
