@@ -183,12 +183,12 @@ def render_biometric(view: DemoStateView) -> str:
         return (
             '<div class="dcta-panel"><div class="dcta-panel-title">Simulated Biometric Verification</div>'
             '<div class="dcta-biometric"><div class="dcta-biometric-icon">\u2705</div>'
-            '<p style="font-size:13px;font-weight:600;">Simulated FaceID verification complete</p></div></div>'
+            '<p style="font-size:13px;font-weight:600;">Simulated biometric verification complete</p></div></div>'
         )
     return (
         '<div class="dcta-panel"><div class="dcta-panel-title">Simulated Biometric Verification</div>'
         '<div class="dcta-biometric"><div class="dcta-biometric-icon">\U0001F464</div>'
-        '<p style="font-size:13px;font-weight:600;">Simulated FaceID</p>'
+        '<p style="font-size:13px;font-weight:600;">Simulated biometric verification</p>'
         '<p style="font-size:11px;color:#667085;">This is a hackathon mock, not real biometric SDK.</p></div></div>'
     )
 
@@ -464,7 +464,7 @@ def create_app(live_mode: bool = False, settings_path: str | None = None):
             confirm_btn = gr.Button("Confirm Bundle", variant="primary", interactive=False)
             reject_btn = gr.Button("Reject", variant="stop", interactive=False)
         with gr.Row():
-            biometric_btn = gr.Button("Simulate FaceID", variant="secondary", interactive=False)
+            biometric_btn = gr.Button("Simulate Biometric", variant="secondary", interactive=False)
             sign_btn = gr.Button("Sign & Verify", variant="secondary", interactive=False)
             authorize_btn = gr.Button("Authorize", variant="primary", interactive=False)
         with gr.Row():
