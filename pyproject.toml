@@ -12,7 +12,7 @@ dependencies = ["pydantic>=2,<3"]
 
 [project.optional-dependencies]
 demo = ["gradio>=4,<7", "cryptography>=42,<51"]
-test = ["pytest>=8,<10"]
+test = ["pytest>=8,<10", "setuptools>=70.1"]
 
 [tool.setuptools.packages.find]
 where = ["src", "."]
